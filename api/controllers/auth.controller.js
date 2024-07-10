@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 export const signup = async (req, res, next) => {
     //console.log(req.body);
     const { username, email, password } = req.body;
@@ -51,4 +52,37 @@ export const signup = async (req, res, next) => {
     } catch(error){
         next(error); // When next is called with an error object, Express recognizes this as an error and will skip any non-error handling middleware. Instead, it will look for error-handling middleware to handle the error.
     }        
+};
+
+export const signin = async (req, res, next) => {
+    const { email, password } = req.body;
+    if (!email || !password || email === "" || password === "") {
+        // return res.status(400).json({ msg: "Not all fields have been entered." });
+        return next(errorHandler(400, "Not all fields have been entered."));
+    }
+    try{
+        const user = await User.findOne({ email });
+        if (!user) {
+            // return res.status(400).json({ msg: "No account with this email has been registered." });
+            next(errorHandler(400, "No account with this email has been registered."));
+        }
+        const isMatch = await bcryptjs.compareSync(password, user.password);
+        if (!isMatch) {
+            // return res.status(400).json({ msg: "Invalid credentials." });
+            return next(errorHandler(400, "Invalid password."));
+        }
+        // const token = user.generateAuthToken();
+        // res.json({ token, ...user._doc });
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+        );
+        
+        const { password: pass, ...rest } = user._doc;
+
+        res.status(200).cookie('access_token', token, { httpOnly: true }).json(rest);
+
+    }catch(error){
+        next(error);
+    }
 };
