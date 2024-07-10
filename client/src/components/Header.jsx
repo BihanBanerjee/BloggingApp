@@ -1,6 +1,5 @@
 import { Button, Navbar, TextInput } from 'flowbite-react'
 import { Link, useLocation } from 'react-router-dom'
-import React from 'react'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { FaMoon } from 'react-icons/fa'
 
