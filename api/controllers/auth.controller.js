@@ -7,11 +7,11 @@ export const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password || username === "" || email === "" || password === "") {
         // return res.status(400).json({ msg: "Not all fields have been entered." });
-        next(errorHandler(400, "Not all fields have been entered."));
+        return next(errorHandler(400, "Not all fields have been entered."));
     }
     if (password.length < 6) {
         // return res.status(400).json({ msg: "The password needs to be at least 6 characters long." });
-        next(errorHandler(400, "The password needs to be at least 6 characters long."));
+        return next(errorHandler(400, "The password needs to be at least 6 characters long."));
     }
 
     // Check if the user already exists
@@ -58,15 +58,17 @@ export const signin = async (req, res, next) => {
     const { email, password } = req.body;
     if (!email || !password || email === "" || password === "") {
         // return res.status(400).json({ msg: "Not all fields have been entered." });
+        const res = next(errorHandler(400, "Not all fields have been entered."));
+        console.log(res);
         return next(errorHandler(400, "Not all fields have been entered."));
     }
     try{
         const user = await User.findOne({ email });
         if (!user) {
             // return res.status(400).json({ msg: "No account with this email has been registered." });
-            next(errorHandler(400, "No account with this email has been registered."));
+            return next(errorHandler(400, "No account with this email has been registered."));
         }
-        const isMatch = await bcryptjs.compareSync(password, user.password);
+        const isMatch = bcryptjs.compareSync(password, user.password);
         if (!isMatch) {
             // return res.status(400).json({ msg: "Invalid credentials." });
             return next(errorHandler(400, "Invalid password."));
@@ -86,3 +88,40 @@ export const signin = async (req, res, next) => {
         next(error);
     }
 };
+
+export const google = async (req, res, next) => {
+    const { email, name, googlePhotoUrl } = req.body;
+
+    try{
+        const user = await User.findOne({ email });
+        if (user) {
+            const token = jwt.sign(
+                { id: user._id },
+                process.env.JWT_SECRET,
+            );
+            
+            const { password: pass, ...rest } = user._doc;
+            res.status(200).cookie('access_token', token, { httpOnly: true }).json(rest);
+        } else {
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+            const newUser = new User({
+                username: name.toLowerCase().split(' ').join('') + Math.random().toString(36).slice(-4),
+                email,
+                password: hashedPassword,
+                profilePicture: googlePhotoUrl
+            });
+            await user.save();
+            const token = jwt.sign(
+                { id: user._id },
+                process.env.JWT_SECRET,
+            );
+            
+            const { password: pass, ...rest } = user._doc;
+            res.status(200).cookie('access_token', token, { httpOnly: true }).json(rest);
+        }
+    }catch(error){
+        next(error);
+    }
+
+}
