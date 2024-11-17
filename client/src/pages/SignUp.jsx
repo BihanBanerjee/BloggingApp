@@ -51,7 +51,7 @@ function SignUp() {
               <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-300 to-purple-200 rounded-lg text-gray-800'>
                 100xdev
               </span>
-              <span className='text-gray-800'>
+              <span className='text-gray-800 dark:text-blue-300'>
                 Blogs
               </span>
             </Link>
@@ -76,6 +76,7 @@ function SignUp() {
                 <Label value='Your Password' />
                 <TextInput type='password' placeholder='***************' id='password' onChange={handleChange} />
               </div>
+
               <Button gradientDuoTone="purpleToBlue" type='submit' disabled={loading}>
                 {loading ? (<>
                   <Spinner size="sm"></Spinner>

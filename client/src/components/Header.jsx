@@ -41,15 +41,17 @@ function Header() {
     }
   };
   return (
-    <Navbar className='border-b-2'>
+    <Navbar className='border-b-2 dark:border-indigo-500'>
         <Link to="/" className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white">
           <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-300 to-purple-200 rounded-lg text-gray-800'>
             100xdev
           </span>
-          <span className='text-gray-800'>
+          <span className='text-gray-800 dark:text-blue-300'>
             Blogs
           </span>
         </Link>
+
+
         <form>
           <TextInput 
             id="search" 
@@ -59,15 +61,20 @@ function Header() {
             className='hidden lg:inline'
           />
         </form>
-        <Button className='w-12 h-10 lg:hidden bg-blue-600' pill>
+
+
+        <Button className='w-12 h-10 lg:hidden  bg-indigo-500 dark:bg-indigo-500' pill>
           <AiOutlineSearch />
         </Button>
+
+
         <div className='flex gap-2 md:order-2'>
           <Button className='w-12 h-10 hidden sm:inline' color='gray' pill onClick={() => dispatch(toogleTheme())}>
             { theme === 'light' ? <FaMoon /> : <FaSun />}
           </Button>
 
-          {currentUser? (
+          {
+          currentUser? (
             <Dropdown
               arrowIcon={false}
               inline
@@ -93,11 +100,14 @@ function Header() {
                 Sign In
               </Button>
             </Link>
-          )}
+          )
+          }
 
 
           <Navbar.Toggle />
         </div>
+
+
         <Navbar.Collapse>
           <Navbar.Link active={path === '/'} as={'div'}>
             <Link to='/'>

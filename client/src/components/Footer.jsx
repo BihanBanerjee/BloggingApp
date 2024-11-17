@@ -5,13 +5,13 @@ import { Link } from "react-router-dom";
 export default function FooterCom() {
   return <Footer container className="border border-t-8 border-indigo-500">
     <div className="w-full max-w-7xl mx-auto">
-        <div className="grid w-full justify-between sm:flex md:grid-cols-1">
+        <div className="grid w-full justify-between sm:flex">
             <div className="mt-5">
                 <Link to="/" className="self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white">
                     <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-300 to-purple-200 rounded-lg text-gray-800'>
                         100xdev
                     </span>
-                    <span className='text-gray-800'>
+                    <span className='text-gray-800 dark:text-blue-300'>
                         Blogs
                     </span>
                 </Link>
@@ -73,7 +73,6 @@ export default function FooterCom() {
                 <Footer.Icon href="#" icon={BsTwitch} />
                 <Footer.Icon href="#" icon={BsGithub} />
                 <Footer.Icon href="#" icon={BsInstagram} />
-
             </div>
         </div>
     </div>
