@@ -76,7 +76,7 @@ export const signin = async (req, res, next) => {
         // const token = user.generateAuthToken();
         // res.json({ token, ...user._doc });
         const token = jwt.sign(
-            { id: user._id },
+            { id: user._id, isAdmin: user.isAdmin },
             process.env.JWT_SECRET,
         );
         
@@ -96,7 +96,7 @@ export const google = async (req, res, next) => {
         const user = await User.findOne({ email });
         if (user) {
             const token = jwt.sign(
-                { id: user._id },
+                { id: user._id, isAdmin: user.isAdmin },
                 process.env.JWT_SECRET,
             );
             
