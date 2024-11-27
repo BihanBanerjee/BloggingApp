@@ -15,11 +15,8 @@ mongoose.connect(process.env.MONGO_CONNECTION_URL)
 
 const app = express();
 
-app.listen(3000, () => {
-    console.log('Server running on port 3000!!!');
-});
 
-// app.get('/test', (req, res) => {
+// app.get('/', (req, res) => {
 //     res.json({msg:'API is working'});
 // });
 
@@ -39,4 +36,7 @@ app.use((err, req, res, next) => { // This is a global catch.
         statusCode,
         message
     });
+});
+app.listen(3000, () => {
+    console.log('Server running on port 3000!!!');
 });

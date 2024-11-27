@@ -1,12 +1,18 @@
 import { Alert, Button, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom";
+import { Comment } from "./Comment";
 
-export const CommentSection = ({postId}) => {
+export const CommentSection = ({ postId }) => {
     const { currentUser } = useSelector(store => store.user);
     const [comment, setComment] = useState('');
     const [commentErorr, setCommentError] = useState('');
+    const [comments, setComments] = useState([]);
+
+    console.log(postId);
+    console.log(currentUser);
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,7 +20,6 @@ export const CommentSection = ({postId}) => {
             return;
         }
         try {
-            
             const res = await fetch('/api/comment/create', {
                 method: 'POST',
                 headers: {
@@ -30,11 +35,31 @@ export const CommentSection = ({postId}) => {
             if (res.ok) {
                 setComment('');
                 setCommentError(null);
+                setComments([data, ...comments]);
             }
         } catch (error) {
             setCommentError(error.message);
         }
     }
+
+    useEffect(() => {
+        const getComments = async () => {
+            try {
+                const res = await fetch(`/api/comment/getPostComments/postId=${postId}`);
+                const data = await res.json();
+                console.log(data);
+                
+                if (res.ok && data.comments) {
+                    setComments(data.comments);
+                    // data.comments && setComments(data.comments);
+                    // console.log(data.comments);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getComments();
+    }, [postId])
   return (
     <div className="max-w-2xl mx-auto w-full p-3">
         {currentUser ? 
@@ -81,6 +106,22 @@ export const CommentSection = ({postId}) => {
                 }
             </form>
         )}
+        {comments.length === 0 ? (
+            <p className="text-sm my-5">
+              No comments yet!  
+            </p>
+        ): (
+            <>
+                <div className="text-sm my-5 flex items-center gap-1">
+                    <p>comments</p>
+                    <div className="border border-gray-400 py-1 px-2 rounded-sm">
+                        <p>{comments.length}</p>
+                    </div>
+                </div>
+                {comments.map( comment => (<Comment key={comment._id} comment={comment} />) )}
+            </>
+        )
+    }
     </div>
   )
 }
