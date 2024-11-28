@@ -20,6 +20,7 @@ export default function UpdatePost() {
     const navigate = useNavigate();    
 
     const { currentUser } = useSelector((store) => store.user);
+    // console.log(formData._id);
 
     useEffect(() => {
         try {
@@ -27,12 +28,13 @@ export default function UpdatePost() {
                 const res = await fetch(`/api/post/getposts?postId=${postId}`);   
                 const data = await res.json();
                 if (!res.ok) {
-                    console.log(data.message);
+                    // console.log(data.message);
                     setPublishError(data.message);
                     return;
                 } 
                 if (res.ok) {
                     setPublishError(null);
+                    console.log(data.posts[0]);
                     setFormData(data.posts[0]);
                 }
             }
@@ -82,6 +84,8 @@ export default function UpdatePost() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData);
+        
         try {
             const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
                 method: 'PUT',
@@ -176,7 +180,6 @@ export default function UpdatePost() {
                 onChange={(value) => {
                     setFormData({...formData, content: value })
                 }}
-                value={formData.content}
             />
             <Button type="submit"  gradientDuoTone="purpleToPink">
                 Update Post
